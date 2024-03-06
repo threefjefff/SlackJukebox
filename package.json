@@ -1,0 +1,24 @@
+{
+  "name": "slackjukebox",
+  "version": "1.0.0",
+  "description": "*Punches jukebox* Eeyyyy",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "build:watch": "tsc -w -p .",
+    "start": "npm run build && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James Boyden",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^3.17.1",
+    "@spotify/web-api-ts-sdk": "^1.2.0",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
