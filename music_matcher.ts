@@ -2,22 +2,19 @@ import {Playlist, SpotifyApi, TrackItem} from "@spotify/web-api-ts-sdk";
 import {FetchChannelPlaylist} from "./spotify_slack_link";
 import {SayFn} from "@slack/bolt";
 
-const slackMessage = /<@[A-Z0-9]+>\s(.*)/
-const spotifyLink = /<https:\/\/open.spotify.com\/(artist|track|album|playlist)\/(\S*)\?.*(>|\|.*>)\s*/;
+const slackMessageRegex = /<@[A-Z0-9]+>\s(.*)/
+export const spotifyLinkRegex = /<https:\/\/open.spotify.com\/(artist|track|album|playlist)\/(\S*)\?.*(>|\|.*>)\s*/;
 export const FindMusic = async (client: SpotifyApi, playlist: Playlist<TrackItem>, fullMessage: string, threadId: string, say: SayFn): Promise<void> => {
     //Strip out the user info. We don't care.
-    const fullMessageMatch = slackMessage.exec(fullMessage);
+    const fullMessageMatch = slackMessageRegex.exec(fullMessage);
+    let matchText = '';
     if(fullMessageMatch === null){
-        await say({
-            thread_ts: threadId,
-            text: `I'm malfunctioning quite badly`,
-            mrkdwn: true
-        });
-        return;
+        matchText = fullMessage;
+    } else{
+        matchText = fullMessageMatch[1];
     }
-    const matchText = fullMessageMatch[1];
     //Contains a link?
-    const linked = spotifyLink.exec(matchText);
+    const linked = spotifyLinkRegex.exec(matchText);
     console.log(matchText)
 
     if(linked !== null){

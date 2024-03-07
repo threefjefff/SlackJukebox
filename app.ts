@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 import {App, LogLevel} from "@slack/bolt";
-import {addTrack, FindMusic} from "./music_matcher";
+import {addTrack, FindMusic, spotifyLinkRegex} from "./music_matcher";
 import {fetchVerifier} from "./pkce";
 import {
     FetchChannelClient, FetchChannelPlaylist,
@@ -71,11 +71,36 @@ const app = new App({
     ]
 });
 
+app.message(spotifyLinkRegex, async ({say, message, event}) => {
+    const spotifyClient = FetchChannelClient(event.channel);
+    const currentPlaylist = FetchChannelPlaylist(event.channel);
+    //We only care about humans posting into the channel or thread
+    var text = undefined
+
+    if(message.subtype === undefined){
+        text = message.text;
+    }
+
+    if(text === undefined){
+        return;
+    }
+
+    if(!spotifyClient || !currentPlaylist){
+        await say({
+            thread_ts: event.ts,
+            text: `There doesn't seem to be a playlist created yet!`,
+            mrkdwn: true
+        })
+    } else {
+        await FindMusic(spotifyClient, currentPlaylist, text, event.ts, say);
+    }
+});
+
 app.event("app_mention", async ({ say, event}) => {
     const message = event.text;
     const spotifyClient = FetchChannelClient(event.channel)
     const currentPlaylist = FetchChannelPlaylist(event.channel)
-    if(!spotifyClient || ! currentPlaylist){
+    if(!spotifyClient || !currentPlaylist){
         await say({
             thread_ts: event.ts,
             text: `There doesn't seem to be a playlist created yet!`,

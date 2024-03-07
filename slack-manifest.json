@@ -17,23 +17,25 @@
                 "name": "Create the jam playlist",
                 "type": "global",
                 "callback_id": "create-jam-playlist",
-                "description": "Creates this week's Jam playlist"
+                "description": "Create's this weeks Jam playlist"
             }
         ]
     },
     "oauth_config": {
         "scopes": {
             "bot": [
-                "chat:write",
                 "app_mentions:read",
-                "commands"
+                "chat:write",
+                "commands",
+                "channels:history"
             ]
         }
     },
     "settings": {
         "event_subscriptions": {
             "bot_events": [
-                "app_mention"
+                "app_mention",
+                "message.channels"
             ]
         },
         "interactivity": {
